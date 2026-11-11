@@ -32,6 +32,7 @@ import {
   EMERGENCY_CONTACT_TEL,
   PROVIDER_DOMAIN,
   PROVIDER_URL,
+  EXACT_VENUE_MAPS_URL,
   SANDHYA_ARGHYA_DATE,
   SANDHYA_ARGHYA_TIME,
   USHA_ARGHYA_DATE,
@@ -308,7 +309,7 @@ export default function App() {
                     </p>
                   </div>
 
-                  {/* Schedule Summary Box */}
+                  {/* Schedule & Exact Venue Pin Summary Box */}
                   <div className="p-4 rounded-xl bg-[#0B0914] border border-white/10 space-y-2.5 text-xs">
                     <div className="flex items-center justify-between text-amber-300 font-semibold">
                       <span className="flex items-center gap-1.5">
@@ -327,6 +328,20 @@ export default function App() {
                       <span className="font-mono-tabular">
                         {USHA_ARGHYA_DATE} · {USHA_ARGHYA_TIME}
                       </span>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                      <span className="flex items-center gap-1.5 text-slate-300">
+                        <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                        Exact Ghat Pin (Aji Dam)
+                      </span>
+                      <a
+                        href={EXACT_VENUE_MAPS_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-amber-300 hover:underline inline-flex items-center gap-1"
+                      >
+                        Open Google Maps <ExternalLink className="w-3 h-3" />
+                      </a>
                     </div>
                   </div>
 
@@ -554,16 +569,26 @@ export default function App() {
 
                   {/* Venue & Dates Summary for Recipient */}
                   <div className="p-4 rounded-xl bg-[#0B0914] border border-amber-500/30 space-y-2.5 text-xs">
-                    <div className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                      <div>
-                        <span className="font-bold text-white block">
-                          Venue: Aji Dam (Ajiram) Chhath Ghat, Rajkot
-                        </span>
-                        <span className="text-slate-400">
-                          Saurashtra Reservoir Embankment · Detailed Terrain Map Below
-                        </span>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start gap-2">
+                        <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold text-white block">
+                            Venue: Aji Dam (Ajiram) Chhath Ghat, Rajkot
+                          </span>
+                          <span className="text-slate-400">
+                            Exact Pin: 22°16&apos;28.2&quot;N 70°50&apos;28.8&quot;E
+                          </span>
+                        </div>
                       </div>
+                      <a
+                        href={EXACT_VENUE_MAPS_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2.5 py-1 text-xs font-semibold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/30 rounded-lg inline-flex items-center gap-1 whitespace-nowrap shrink-0"
+                      >
+                        Exact Pin <ExternalLink className="w-3 h-3" />
+                      </a>
                     </div>
                     <div className="pt-2 border-t border-white/10 space-y-1">
                       <div className="flex justify-between">
@@ -721,8 +746,15 @@ export default function App() {
 
             <div className="lg:col-span-5 bg-[#0B0914] border border-white/10 rounded-xl p-5 space-y-3 text-xs">
               <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
-                <span className="text-slate-400">Festival Venue</span>
-                <span className="font-semibold text-white">Aji Dam (Ajiram), Rajkot, Gujarat</span>
+                <span className="text-slate-400">Festival Venue Pin</span>
+                <a
+                  href={EXACT_VENUE_MAPS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-amber-300 hover:underline inline-flex items-center gap-1"
+                >
+                  Aji Dam (Ajiram) Exact Pin <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
               <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
                 <span className="text-slate-400">Sandhya Arghya</span>

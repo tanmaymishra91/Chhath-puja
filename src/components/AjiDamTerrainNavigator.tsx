@@ -28,6 +28,9 @@ import {
   EMERGENCY_CONTACT_TEL,
   PROVIDER_DOMAIN,
   PROVIDER_URL,
+  EXACT_VENUE_MAPS_URL,
+  EXACT_VENUE_QUERY,
+  EXACT_VENUE_LABEL,
   ElevationPoint,
   computeElevationStats,
 } from '../utils/invitationLogic';
@@ -78,6 +81,7 @@ const TerrainMapInner: React.FC<TerrainMapInnerProps> = ({
 }) => {
   const map = useMap();
   const placesLib = useMapsLibrary('places');
+  const geocodingLib = useMapsLibrary('geocoding');
   const elevationLib = useMapsLibrary('elevation');
   const routesLib = useMapsLibrary('routes');
   const apiStatus = useApiLoadingStatus();
@@ -87,7 +91,7 @@ const TerrainMapInner: React.FC<TerrainMapInnerProps> = ({
   const [markerRef, markerInstance] = useAdvancedMarkerRef();
   const [searchError, setSearchError] = useState<string | null>(null);
 
-  // Dynamically resolve place from Google Maps Platform Places API (New) via Place.searchByText
+  // Dynamically resolve exact pinned place via Google Maps Geocoder & Places API (New)
   useEffect(() => {
     if (!placesLib || !searchQuery.trim()) return;
 
@@ -96,8 +100,14 @@ const TerrainMapInner: React.FC<TerrainMapInnerProps> = ({
 
     const runSearch = async () => {
       try {
+        const isExactVenueQuery =
+          searchQuery.includes('22°16\'28.2"N') ||
+          searchQuery.toLowerCase().includes('exact') ||
+          searchQuery === EXACT_VENUE_QUERY;
+
+        // Fetch Aji Dam place metadata via Places API (New)
         const { places } = await placesLib.Place.searchByText({
-          textQuery: searchQuery,
+          textQuery: isExactVenueQuery ? 'Aji Dam, Rajkot, Gujarat' : searchQuery,
           fields: [
             'id',
             'displayName',
@@ -111,37 +121,58 @@ const TerrainMapInner: React.FC<TerrainMapInnerProps> = ({
           maxResultCount: 1,
         });
 
+        let exactGeoLocation: { lat: number; lng: number } | null = null;
+        let exactGeoAddress: string | null = null;
+
+        if (isExactVenueQuery && geocodingLib) {
+          try {
+            const geocoder = new geocodingLib.Geocoder();
+            const geoRes = await geocoder.geocode({ address: EXACT_VENUE_QUERY });
+            const firstGeo = geoRes.results?.[0];
+            if (firstGeo?.geometry?.location) {
+              exactGeoLocation = {
+                lat: firstGeo.geometry.location.lat(),
+                lng: firstGeo.geometry.location.lng(),
+              };
+              exactGeoAddress = firstGeo.formatted_address || null;
+            }
+          } catch (geoErr) {
+            dispatchQuotaIfNeeded(geoErr);
+          }
+        }
+
         if (cancelled) return;
         const firstPlace = places?.[0];
-        if (firstPlace && firstPlace.location) {
-          const lat = firstPlace.location.lat();
-          const lng = firstPlace.location.lng();
+        if (exactGeoLocation || (firstPlace && firstPlace.location)) {
+          const lat = exactGeoLocation
+            ? exactGeoLocation.lat
+            : firstPlace!.location!.lat();
+          const lng = exactGeoLocation
+            ? exactGeoLocation.lng
+            : firstPlace!.location!.lng();
+
           const info: ResolvedPlaceInfo = {
-            id: firstPlace.id || 'aji-dam-place',
-            name: firstPlace.displayName || searchQuery,
-            address: firstPlace.formattedAddress || '',
+            id: firstPlace?.id || 'aji-dam-exact-pin',
+            name: isExactVenueQuery
+              ? 'Aji Dam Chhath Puja Exact Venue Pin'
+              : firstPlace?.displayName || searchQuery,
+            address:
+              exactGeoAddress ||
+              firstPlace?.formattedAddress ||
+              'Aji Dam (Ajiram), Rajkot, Gujarat',
             location: { lat, lng },
-            rating: firstPlace.rating,
-            userRatingCount: firstPlace.userRatingCount,
-            googleMapsURI: firstPlace.googleMapsURI,
+            rating: firstPlace?.rating,
+            userRatingCount: firstPlace?.userRatingCount,
+            googleMapsURI: isExactVenueQuery
+              ? EXACT_VENUE_MAPS_URL
+              : firstPlace?.googleMapsURI || EXACT_VENUE_MAPS_URL,
           };
           setResolvedPlace(info);
           onPlaceResolved(info);
 
           if (map) {
-            if (firstPlace.viewport) {
-              map.fitBounds(firstPlace.viewport);
-              // Keep detailed terrain zoom around the dam reservoir
-              window.setTimeout(() => {
-                const currentZoom = map.getZoom();
-                if (currentZoom && (currentZoom < 14 || currentZoom > 16)) {
-                  map.setZoom(15);
-                }
-              }, 300);
-            } else {
-              map.panTo({ lat, lng });
-              map.setZoom(15);
-            }
+            map.panTo({ lat, lng });
+            map.setZoom(16);
           }
         } else {
           setSearchError('No matching location returned for that search query.');
@@ -158,7 +189,7 @@ const TerrainMapInner: React.FC<TerrainMapInnerProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [placesLib, searchQuery, map, onPlaceResolved]);
+  }, [placesLib, geocodingLib, searchQuery, map, onPlaceResolved]);
 
   // Sample real terrain elevation profile across the resolved location using ElevationService
   useEffect(() => {
@@ -331,8 +362,8 @@ const TerrainMapInner: React.FC<TerrainMapInnerProps> = ({
 };
 
 export const AjiDamTerrainNavigator: React.FC = () => {
-  const [searchInput, setSearchInput] = useState('Aji Dam, Rajkot, Gujarat');
-  const [activeQuery, setActiveQuery] = useState('Aji Dam, Rajkot, Gujarat');
+  const [searchInput, setSearchInput] = useState(EXACT_VENUE_LABEL);
+  const [activeQuery, setActiveQuery] = useState(EXACT_VENUE_QUERY);
   const [mapTypeId, setMapTypeId] = useState<MapTypeOption>('terrain');
   const [placeInfo, setPlaceInfo] = useState<ResolvedPlaceInfo | null>(null);
   const [elevationPoints, setElevationPoints] = useState<ElevationPoint[]>([]);
@@ -373,33 +404,43 @@ export const AjiDamTerrainNavigator: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-white/10 pb-6">
         <div className="space-y-2 max-w-2xl">
           <div className="text-xs font-medium text-amber-400 tracking-wide">
-            Primary Navigation · Live Topographical & Ghat Mapping
+            Primary Navigation · Exact Venue Pin (22°16&apos;28.2&quot;N 70°50&apos;28.8&quot;E)
           </div>
           <h2 className="text-2xl sm:text-4xl font-bold text-[#FBF7F0] tracking-tight">
-            Aji Dam (Ajiram) Terrain & Ritual Navigation
+            Aji Dam (Ajiram) Exact Location & Terrain Navigation
           </h2>
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-            Explore real-time terrain contours, reservoir elevation transects, and live driving directions to the
-            Chhath Puja Ghat at Aji Dam, Rajkot.
+            Centered on our exact Chhath Puja Ghat spot at Aji Dam, Rajkot — explore real-time terrain
+            contours, reservoir elevation transects, or open the exact Google Maps pin directly.
           </p>
         </div>
 
         {/* Map Layer Mode Segmented Controls */}
-        <div className="flex items-center gap-1 p-1 bg-[#161224] border border-white/10 rounded-lg self-start">
-          {(['terrain', 'hybrid', 'satellite', 'roadmap'] as MapTypeOption[]).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setMapTypeId(mode)}
-              className={`px-3.5 py-2 text-xs font-semibold rounded-md transition-colors capitalize whitespace-nowrap shrink-0 ${
-                mapTypeId === mode
-                  ? 'bg-amber-500 text-slate-950 shadow-sm'
-                  : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              {mode === 'terrain' ? 'Terrain Relief' : mode}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-3 self-start">
+          <a
+            href={EXACT_VENUE_MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg inline-flex items-center gap-1.5 transition-colors shadow-sm whitespace-nowrap shrink-0"
+          >
+            Open Exact Google Maps Pin <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+          <div className="flex items-center gap-1 p-1 bg-[#161224] border border-white/10 rounded-lg">
+            {(['terrain', 'hybrid', 'satellite', 'roadmap'] as MapTypeOption[]).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setMapTypeId(mode)}
+                className={`px-3.5 py-2 text-xs font-semibold rounded-md transition-colors capitalize whitespace-nowrap shrink-0 ${
+                  mapTypeId === mode
+                    ? 'bg-amber-500 text-slate-950 shadow-sm'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                {mode === 'terrain' ? 'Terrain Relief' : mode}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -435,12 +476,12 @@ export const AjiDamTerrainNavigator: React.FC = () => {
             <button
               type="button"
               onClick={() => {
-                setSearchInput('Aji Dam, Rajkot, Gujarat');
-                setActiveQuery('Aji Dam, Rajkot, Gujarat');
+                setSearchInput(EXACT_VENUE_LABEL);
+                setActiveQuery(EXACT_VENUE_QUERY);
               }}
               className="px-3 py-2 text-xs font-medium bg-white/5 hover:bg-white/10 text-amber-200 border border-white/10 rounded-lg transition-colors whitespace-nowrap shrink-0"
             >
-              Reset to Aji Dam
+              Reset to Exact Pin
             </button>
           </form>
 
@@ -464,7 +505,7 @@ export const AjiDamTerrainNavigator: React.FC = () => {
                   Google Maps Platform Terrain Viewport Ready
                 </p>
                 <p className="text-xs text-slate-400 max-w-md mt-1">
-                  Target Venue: Aji Dam (Ajiram), Rajkot · Schedule: 15 November (Evening ~4:00 PM) & 16 November (Morning ~4:00 AM).
+                  Exact Venue Pin: Aji Dam (Ajiram), Rajkot (22°16&apos;28.2&quot;N 70°50&apos;28.8&quot;E) · 15 Nov (~4:00 PM) & 16 Nov (~4:00 AM).
                 </p>
               </div>
             )}
@@ -478,25 +519,23 @@ export const AjiDamTerrainNavigator: React.FC = () => {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-xs text-amber-400 font-medium">
-                  Verified Festival Destination · Aji River Basin
+                  Verified Exact Venue Pin · Aji Dam (Ajiram), Rajkot
                 </div>
                 <h3 className="text-xl font-bold text-white mt-0.5">
-                  {placeInfo ? placeInfo.name : 'Aji Dam (Ajiram) Chhath Ghat'}
+                  {placeInfo ? placeInfo.name : 'Aji Dam Chhath Puja Exact Venue Pin'}
                 </h3>
                 <p className="text-xs text-slate-300 mt-1">
-                  {placeInfo?.address || 'Resolving official address from Google Maps Platform Places API…'}
+                  {placeInfo?.address || 'Resolving exact location from Google Maps Platform…'}
                 </p>
               </div>
-              {placeInfo?.googleMapsURI && (
-                <a
-                  href={placeInfo.googleMapsURI}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-1.5 text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 rounded-lg inline-flex items-center gap-1.5 whitespace-nowrap shrink-0"
-                >
-                  Open Maps <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              )}
+              <a
+                href={EXACT_VENUE_MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 rounded-lg inline-flex items-center gap-1.5 whitespace-nowrap shrink-0"
+              >
+                Exact Pin <ExternalLink className="w-3.5 h-3.5" />
+              </a>
             </div>
 
             {/* Live Coordinates & Ratings */}

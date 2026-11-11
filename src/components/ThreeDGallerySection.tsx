@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Sparkles, Eye, Layers, Calendar } from 'lucide-react';
 import { CameraPreset } from './ChhathThreeScene';
+import sandhyaArghyaImg from '../assets/images/chhath_sandhya_arghya_1794398072426.jpg';
+import ushaArghyaImg from '../assets/images/chhath_usha_arghya_1794398073709.jpg';
+import soopPrasadImg from '../assets/images/chhath_soop_prasad_1794398075597.jpg';
+import ajiDamFireworksImg from '../assets/images/aji_dam_festive_ghat_1794398075217.jpg';
 
 export interface FestivePhotoCard {
   id: string;
@@ -8,6 +12,7 @@ export interface FestivePhotoCard {
   subtitle: string;
   timingBadge: string;
   imageUrl: string;
+  fallbackUrl: string;
   cameraPreset: CameraPreset;
   description: string;
 }
@@ -18,7 +23,8 @@ export const CHHATH_AI_GALLERY: FestivePhotoCard[] = [
     title: 'Sandhya Arghya at Aji Dam Waterfront',
     subtitle: 'Evening Sunset Offering · Bamboo Soop & Brass Diyas',
     timingBadge: '15 November · Evening, near 4:00 PM',
-    imageUrl: '/src/assets/images/chhath_sandhya_arghya_1794398072426.jpg',
+    imageUrl: sandhyaArghyaImg,
+    fallbackUrl: '/images/chhath_sandhya_arghya.jpg',
     cameraPreset: 'ghat',
     description:
       'Devotees standing in the golden sunset waters of Aji Dam (Ajiram) offering sacred bamboo soop baskets brimming with sugarcane, coconuts, and glowing diyas to Lord Surya.',
@@ -28,7 +34,8 @@ export const CHHATH_AI_GALLERY: FestivePhotoCard[] = [
     title: 'Usha Arghya Dawn Reflections',
     subtitle: 'Pre-Dawn Ghat Ritual · Floating Earthen Lamps',
     timingBadge: '16 November · Morning, near 4:00 AM',
-    imageUrl: '/src/assets/images/chhath_usha_arghya_1794398073709.jpg',
+    imageUrl: ushaArghyaImg,
+    fallbackUrl: '/images/chhath_usha_arghya.jpg',
     cameraPreset: 'overview',
     description:
       'Hundreds of flickering earthen oil lamps drifting across the serene morning waters as families gather before 4:00 AM for the auspicious Usha Arghya offering.',
@@ -38,7 +45,8 @@ export const CHHATH_AI_GALLERY: FestivePhotoCard[] = [
     title: 'Sacred Bamboo Soop & Thekua Prasad',
     subtitle: 'Traditional Offerings · Sugarcane, Coconut & Marigold',
     timingBadge: '15–16 November · Sacred Prasad',
-    imageUrl: '/src/assets/images/chhath_soop_prasad_1794398075597.jpg',
+    imageUrl: soopPrasadImg,
+    fallbackUrl: '/images/chhath_soop_prasad.jpg',
     cameraPreset: 'mobile',
     description:
       'Handwoven bamboo winnowing basket adorned with sindoor, holding handmade wheat-jaggery Thekua pastries, fresh green sugarcane stalks, bananas, and lit brass diya.',
@@ -48,7 +56,8 @@ export const CHHATH_AI_GALLERY: FestivePhotoCard[] = [
     title: 'Aji Dam Illuminated Ghat & Fireworks',
     subtitle: 'Festive Twilight Aerial · Crackers & Reservoir Glow',
     timingBadge: '15 November · Evening Celebration',
-    imageUrl: '/src/assets/images/aji_dam_festive_ghat_1794398075217.jpg',
+    imageUrl: ajiDamFireworksImg,
+    fallbackUrl: '/images/aji_dam_festive_ghat.jpg',
     cameraPreset: 'fireworks',
     description:
       'Panoramic twilight celebration over Aji Dam in Rajkot with thousands of diyas illuminating the curved ghat embankments and festive fireworks sparkling across the sky.',
@@ -61,6 +70,7 @@ interface ThreeDGallerySectionProps {
 
 export const ThreeDGallerySection: React.FC<ThreeDGallerySectionProps> = ({ onFocusIn3DScene }) => {
   const [tiltState, setTiltState] = useState<Record<string, { rotX: number; rotY: number }>>({});
+  const [useFallbackUrl, setUseFallbackUrl] = useState<Record<string, boolean>>({});
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const [selectedCard, setSelectedCard] = useState<FestivePhotoCard | null>(null);
 
@@ -128,15 +138,19 @@ export const ThreeDGallerySection: React.FC<ThreeDGallerySectionProps> = ({ onFo
                 <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-gradient-to-br from-amber-950 via-[#1B112C] to-[#0B0914]">
                   {!hasFailed ? (
                     <img
-                      src={card.imageUrl}
+                      src={useFallbackUrl[card.id] ? card.fallbackUrl : card.imageUrl}
                       alt={card.title}
-                      referrerPolicy="no-referrer"
-                      onError={() =>
-                        setFailedImages((prev) => ({
-                          ...prev,
-                          [card.id]: true,
-                        }))
-                      }
+                      loading="eager"
+                      onError={() => {
+                        if (!useFallbackUrl[card.id]) {
+                          setUseFallbackUrl((prev) => ({ ...prev, [card.id]: true }));
+                        } else {
+                          setFailedImages((prev) => ({
+                            ...prev,
+                            [card.id]: true,
+                          }));
+                        }
+                      }}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (

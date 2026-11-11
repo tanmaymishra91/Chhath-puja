@@ -48,6 +48,10 @@ export const EMERGENCY_CONTACT_TEL = 'tel:+919690222999';
 export const PROVIDER_DOMAIN = 'aozoradesu.com';
 export const PROVIDER_URL = 'https://aozoradesu.com';
 
+export const EXACT_VENUE_MAPS_URL = 'https://maps.app.goo.gl/Q4TCMoh9ziCaPK7VA?g_st=aw';
+export const EXACT_VENUE_QUERY = '22°16\'28.2"N 70°50\'28.8"E';
+export const EXACT_VENUE_LABEL = 'Aji Dam (Ajiram) Chhath Ghat · 22°16\'28.2"N 70°50\'28.8"E, Rajkot';
+
 export const SANDHYA_ARGHYA_DATE = '15 November';
 export const SANDHYA_ARGHYA_TIME = 'Evening, near 4:00 PM';
 export const USHA_ARGHYA_DATE = '16 November';
@@ -60,9 +64,9 @@ export const CHHATH_SCHEDULE: FestivalScheduleItem[] = [
     hindiTitle: 'संध्या अर्घ्य · अस्तचलगामी सूर्य पूजा',
     dateLabel: SANDHYA_ARGHYA_DATE,
     timeLabel: SANDHYA_ARGHYA_TIME,
-    locationZone: 'Aji Dam (Ajiram) Main Ghat Embankment, Rajkot',
+    locationZone: 'Aji Dam (Ajiram) Exact Ghat Pin (22°16\'28.2"N 70°50\'28.8"E), Rajkot',
     description:
-      'Evening gathering and sacred offering of bamboo soop, Thekua prasad, sugarcane, and lit earthen diyas to the setting Sun God along the Aji Dam reservoir banks.',
+      'Evening gathering and sacred offering of bamboo soop, Thekua prasad, sugarcane, and lit earthen diyas to the setting Sun God along our exact Aji Dam Ghat spot.',
   },
   {
     id: 'usha-arghya',
@@ -70,7 +74,7 @@ export const CHHATH_SCHEDULE: FestivalScheduleItem[] = [
     hindiTitle: 'उषा अर्घ्य · उदीयमान सूर्य अर्घ्य',
     dateLabel: USHA_ARGHYA_DATE,
     timeLabel: USHA_ARGHYA_TIME,
-    locationZone: 'Aji Dam (Ajiram) Eastern Waterfront Steps, Rajkot',
+    locationZone: 'Aji Dam (Ajiram) Exact Ghat Pin (22°16\'28.2"N 70°50\'28.8"E), Rajkot',
     description:
       'Pre-dawn arrival near 4:00 AM with floating diyas and Chhath Geet recitals, offering Usha Arghya to the rising Sun God followed by sacred Paran prasad distribution.',
   },
@@ -169,8 +173,8 @@ export function formatPersonalizedGreeting(guestName: string | null): {
 } {
   const cleanName = guestName && guestName.trim() ? guestName.trim() : 'Dear Devotee & Family';
   const headline = `Hey, welcome ${cleanName}!`;
-  const subheadline = `You are cordially invited to celebrate Chhath Puja Mahaparv at Aji Dam (Ajiram) Ghat, Rajkot — 15 November (${SANDHYA_ARGHYA_TIME}) & 16 November (${USHA_ARGHYA_TIME}).`;
-  const shareMessage = `Hey, welcome ${cleanName}! Join us for Chhath Puja at Aji Dam (Ajiram), Rajkot on 15 November (Evening, near 4:00 PM) & 16 November (near 4:00 AM). Make your weekend safe! Emergency Contact: ${EMERGENCY_CONTACT_NUMBER} · Provided by ${PROVIDER_DOMAIN}`;
+  const subheadline = `You are cordially invited to celebrate Chhath Puja Mahaparv at our exact Aji Dam (Ajiram) Ghat spot, Rajkot — 15 November (${SANDHYA_ARGHYA_TIME}) & 16 November (${USHA_ARGHYA_TIME}).`;
+  const shareMessage = `Hey, welcome ${cleanName}! Join us for Chhath Puja at Aji Dam (Ajiram), Rajkot on 15 November (Evening, near 4:00 PM) & 16 November (near 4:00 AM). Exact Location Pin: ${EXACT_VENUE_MAPS_URL} · Make your weekend safe! Emergency Contact: ${EMERGENCY_CONTACT_NUMBER} · Provided by ${PROVIDER_DOMAIN}`;
 
   return {
     headline,

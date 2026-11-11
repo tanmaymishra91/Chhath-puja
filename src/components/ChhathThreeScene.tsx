@@ -3,6 +3,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { EMERGENCY_CONTACT_NUMBER, PROVIDER_DOMAIN } from '../utils/invitationLogic';
+import sandhyaArghyaImg from '../assets/images/chhath_sandhya_arghya_1794398072426.jpg';
+import ushaArghyaImg from '../assets/images/chhath_usha_arghya_1794398073709.jpg';
+import soopPrasadImg from '../assets/images/chhath_soop_prasad_1794398075597.jpg';
+import ajiDamFireworksImg from '../assets/images/aji_dam_festive_ghat_1794398075217.jpg';
 
 export type CameraPreset = 'overview' | 'mobile' | 'ghat' | 'fireworks';
 
@@ -129,26 +133,29 @@ function drawMobileScreenCanvas(
   ctx.lineTo(w - 80, 442);
   ctx.stroke();
 
-  // Venue Box: Aji Dam (Ajiram), Rajkot
+  // Venue Box: Aji Dam (Ajiram), Rajkot (Exact Pin)
   ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
-  ctx.fillRect(54, 472, w - 108, 175);
+  ctx.fillRect(54, 468, w - 108, 185);
   ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
   ctx.lineWidth = 2;
-  ctx.strokeRect(54, 472, w - 108, 175);
+  ctx.strokeRect(54, 468, w - 108, 185);
 
   ctx.fillStyle = '#FDBA74';
-  ctx.font = '600 19px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('SACRED VENUE & TERRAIN GHAT', w / 2, 510);
+  ctx.font = '600 18px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('EXACT PIN · 22°16\'28.2"N 70°50\'28.8"E', w / 2, 502);
 
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '700 28px "Cinzel", Georgia, serif';
-  ctx.fillText('Aji Dam (Ajiram), Rajkot', w / 2, 552);
+  ctx.font = '700 27px "Cinzel", Georgia, serif';
+  ctx.fillText('Aji Dam (Ajiram), Rajkot', w / 2, 540);
 
   ctx.fillStyle = '#E2E8F0';
   ctx.font = '500 17px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('15 Nov · Evening near 4:00 PM (Sandhya)', w / 2, 590);
+  ctx.fillText('15 Nov · Evening near 4:00 PM (Sandhya)', w / 2, 576);
   ctx.fillStyle = '#FDE047';
-  ctx.fillText('16 Nov · Morning near 4:00 AM (Usha)', w / 2, 624);
+  ctx.fillText('16 Nov · Morning near 4:00 AM (Usha)', w / 2, 608);
+  ctx.fillStyle = '#93C5FD';
+  ctx.font = '600 15px "JetBrains Mono", monospace';
+  ctx.fillText('maps.app.goo.gl/Q4TCMoh9ziCaPK7VA', w / 2, 638);
 
   // Emergency Contact & Safe Weekend Badge
   ctx.fillStyle = 'rgba(16, 185, 129, 0.16)';
@@ -618,10 +625,16 @@ export const ChhathThreeScene: React.FC<ChhathThreeSceneProps> = ({
 
     // 7. 3D Framed AI Photo Monoliths flanking the Aji Dam Ghat (4 generated images)
     const photoUrls = [
-      '/src/assets/images/chhath_sandhya_arghya_1794398072426.jpg',
-      '/src/assets/images/chhath_usha_arghya_1794398073709.jpg',
-      '/src/assets/images/chhath_soop_prasad_1794398075597.jpg',
-      '/src/assets/images/aji_dam_festive_ghat_1794398075217.jpg',
+      sandhyaArghyaImg,
+      ushaArghyaImg,
+      soopPrasadImg,
+      ajiDamFireworksImg,
+    ];
+    const fallbackPhotoUrls = [
+      '/images/chhath_sandhya_arghya.jpg',
+      '/images/chhath_usha_arghya.jpg',
+      '/images/chhath_soop_prasad.jpg',
+      '/images/aji_dam_festive_ghat.jpg',
     ];
     const monolithTransforms = [
       { pos: [-5.6, 2.35, 2.4], rotY: 0.48 },
@@ -648,18 +661,26 @@ export const ChhathThreeScene: React.FC<ChhathThreeSceneProps> = ({
         roughness: 0.3,
         metalness: 0.1,
       });
+      const applyTexture = (tex: THREE.Texture) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = maxAnisotropy;
+        photoMat.map = tex;
+        photoMat.needsUpdate = true;
+        loadedPhotoTextures.push(tex);
+      };
       texLoader.load(
         photoUrls[idx],
-        (tex) => {
-          tex.colorSpace = THREE.SRGBColorSpace;
-          tex.anisotropy = maxAnisotropy;
-          photoMat.map = tex;
-          photoMat.needsUpdate = true;
-          loadedPhotoTextures.push(tex);
-        },
+        applyTexture,
         undefined,
         () => {
-          photoMat.color.setHex(0xf59e0b);
+          texLoader.load(
+            fallbackPhotoUrls[idx],
+            applyTexture,
+            undefined,
+            () => {
+              photoMat.color.setHex(0xf59e0b);
+            }
+          );
         }
       );
 

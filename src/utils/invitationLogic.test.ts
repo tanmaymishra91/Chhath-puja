@@ -9,6 +9,7 @@ import {
   CHHATH_SCHEDULE,
   EMERGENCY_CONTACT_NUMBER,
   PROVIDER_DOMAIN,
+  EXACT_VENUE_MAPS_URL,
 } from './invitationLogic';
 
 test('validateGuestName rejects empty or whitespace-only names', () => {
@@ -50,13 +51,14 @@ test('parseInvitationParams handles autostart=1 and view=navigation', () => {
   assert.equal(parsed.initialSection, 'navigation');
 });
 
-test('formatPersonalizedGreeting formats Hey, welcome with guest name, 15/16 Nov dates, and safety info', () => {
+test('formatPersonalizedGreeting formats Hey, welcome with guest name, 15/16 Nov dates, exact venue link, and safety info', () => {
   const greeting = formatPersonalizedGreeting('Ananya Sharma');
   assert.equal(greeting.headline, 'Hey, welcome Ananya Sharma!');
   assert.ok(greeting.subheadline.includes('15 November'));
   assert.ok(greeting.subheadline.includes('16 November'));
   assert.ok(greeting.shareMessage.includes(EMERGENCY_CONTACT_NUMBER));
   assert.ok(greeting.shareMessage.includes(PROVIDER_DOMAIN));
+  assert.ok(greeting.shareMessage.includes(EXACT_VENUE_MAPS_URL));
 });
 
 test('CHHATH_SCHEDULE includes 15 November evening near 4:00 PM and 16 November near 4:00 AM', () => {
