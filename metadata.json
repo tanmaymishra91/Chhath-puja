@@ -1,0 +1,6 @@
+{
+  "name": "Chhath Puja 3D Invitation & Aji Dam Navigator",
+  "description": "Interactive 3D Three.js Chhath Puja festival invitation app with personalized share links, devotional Chhath Geet audio, 3D fireworks, Gemini Nano Banana gallery, and Aji Dam Rajkot terrain navigation provided by aozoradesu.com.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
