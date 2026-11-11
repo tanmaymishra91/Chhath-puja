@@ -27,7 +27,7 @@ export const CHHATH_AI_GALLERY: FestivePhotoCard[] = [
     fallbackUrl: '/images/chhath_sandhya_arghya.jpg',
     cameraPreset: 'ghat',
     description:
-      'Devotees standing in the golden sunset waters of Aji Dam (Ajiram) offering sacred bamboo soop baskets brimming with sugarcane, coconuts, and glowing diyas to Lord Surya.',
+      'Devotees standing in the golden sunset waters of Aji Dam offering sacred bamboo soop baskets brimming with sugarcane, coconuts, and glowing diyas to Lord Surya.',
   },
   {
     id: 'usha-arghya',

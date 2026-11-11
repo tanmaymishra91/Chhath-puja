@@ -133,7 +133,7 @@ function drawMobileScreenCanvas(
   ctx.lineTo(w - 80, 442);
   ctx.stroke();
 
-  // Venue Box: Aji Dam (Ajiram), Rajkot (Exact Pin)
+  // Venue Box: Aji Dam, Rajkot (Exact Pin)
   ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
   ctx.fillRect(54, 468, w - 108, 185);
   ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
@@ -145,8 +145,8 @@ function drawMobileScreenCanvas(
   ctx.fillText('EXACT PIN · 22°16\'28.2"N 70°50\'28.8"E', w / 2, 502);
 
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '700 27px "Cinzel", Georgia, serif';
-  ctx.fillText('Aji Dam (Ajiram), Rajkot', w / 2, 540);
+  ctx.font = '700 28px "Cinzel", Georgia, serif';
+  ctx.fillText('Aji Dam, Rajkot', w / 2, 540);
 
   ctx.fillStyle = '#E2E8F0';
   ctx.font = '500 17px "Plus Jakarta Sans", sans-serif';

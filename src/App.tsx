@@ -290,7 +290,7 @@ export default function App() {
               <div className="flex flex-wrap items-center gap-2 text-xs text-amber-300/90 font-medium">
                 <span>Chhath Puja Festival</span>
                 <span aria-hidden="true">·</span>
-                <span>Aji Dam (Ajiram), Rajkot</span>
+                <span>Aji Dam, Rajkot</span>
                 <span aria-hidden="true">·</span>
                 <span>Provided by {PROVIDER_DOMAIN}</span>
               </div>
@@ -304,7 +304,7 @@ export default function App() {
                     </h1>
                     <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
                       Celebrate the divine festival of Surya Dev & Chhathi Maiya at the scenic waterfront of{' '}
-                      <strong className="text-amber-300 font-semibold">Aji Dam (Ajiram), Rajkot</strong> with
+                      <strong className="text-amber-300 font-semibold">Aji Dam, Rajkot</strong> with
                       3D fireworks, devotional Chhath Geet music, and personalized family invitations.
                     </p>
                   </div>
@@ -574,7 +574,7 @@ export default function App() {
                         <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                         <div>
                           <span className="font-bold text-white block">
-                            Venue: Aji Dam (Ajiram) Chhath Ghat, Rajkot
+                            Venue: Aji Dam Chhath Ghat, Rajkot
                           </span>
                           <span className="text-slate-400">
                             Exact Pin: 22°16&apos;28.2&quot;N 70°50&apos;28.8&quot;E
@@ -687,7 +687,7 @@ export default function App() {
           />
         </section>
 
-        {/* SECTION 2: PRIMARY NAVIGATION SCREEN — DETAILED TERRAIN MAPPING OF AJI DAM (AJIRAM) */}
+        {/* SECTION 2: PRIMARY NAVIGATION SCREEN — DETAILED TERRAIN MAPPING OF AJI DAM */}
         <div id="terrain-navigation" className="border-b border-white/10 bg-[#0E0B1A]">
           <AjiDamTerrainNavigator />
         </div>
@@ -712,7 +712,7 @@ export default function App() {
           <div className="bg-[#141022] border border-amber-500/30 rounded-2xl p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-3">
               <div className="text-xs font-medium text-emerald-400">
-                Safe Weekend Initiative · Chhath Puja Mahaparv at Aji Dam (Ajiram)
+                Safe Weekend Initiative · Chhath Puja Mahaparv at Aji Dam
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-white">
                 Make Your Festive Weekend Safe & Memorable
@@ -753,7 +753,7 @@ export default function App() {
                   rel="noopener noreferrer"
                   className="font-semibold text-amber-300 hover:underline inline-flex items-center gap-1"
                 >
-                  Aji Dam (Ajiram) Exact Pin <ExternalLink className="w-3 h-3" />
+                  Aji Dam Exact Pin <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
               <div className="flex items-center justify-between border-b border-white/10 pb-2.5">

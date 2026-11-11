@@ -159,7 +159,7 @@ const TerrainMapInner: React.FC<TerrainMapInnerProps> = ({
             address:
               exactGeoAddress ||
               firstPlace?.formattedAddress ||
-              'Aji Dam (Ajiram), Rajkot, Gujarat',
+              'Aji Dam, Rajkot, Gujarat',
             location: { lat, lng },
             rating: firstPlace?.rating,
             userRatingCount: firstPlace?.userRatingCount,
@@ -407,7 +407,7 @@ export const AjiDamTerrainNavigator: React.FC = () => {
             Primary Navigation · Exact Venue Pin (22°16&apos;28.2&quot;N 70°50&apos;28.8&quot;E)
           </div>
           <h2 className="text-2xl sm:text-4xl font-bold text-[#FBF7F0] tracking-tight">
-            Aji Dam (Ajiram) Exact Location & Terrain Navigation
+            Aji Dam Exact Location & Terrain Navigation
           </h2>
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
             Centered on our exact Chhath Puja Ghat spot at Aji Dam, Rajkot — explore real-time terrain
@@ -505,7 +505,7 @@ export const AjiDamTerrainNavigator: React.FC = () => {
                   Google Maps Platform Terrain Viewport Ready
                 </p>
                 <p className="text-xs text-slate-400 max-w-md mt-1">
-                  Exact Venue Pin: Aji Dam (Ajiram), Rajkot (22°16&apos;28.2&quot;N 70°50&apos;28.8&quot;E) · 15 Nov (~4:00 PM) & 16 Nov (~4:00 AM).
+                  Exact Venue Pin: Aji Dam, Rajkot (22°16&apos;28.2&quot;N 70°50&apos;28.8&quot;E) · 15 Nov (~4:00 PM) & 16 Nov (~4:00 AM).
                 </p>
               </div>
             )}
@@ -519,7 +519,7 @@ export const AjiDamTerrainNavigator: React.FC = () => {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-xs text-amber-400 font-medium">
-                  Verified Exact Venue Pin · Aji Dam (Ajiram), Rajkot
+                  Verified Exact Venue Pin · Aji Dam, Rajkot
                 </div>
                 <h3 className="text-xl font-bold text-white mt-0.5">
                   {placeInfo ? placeInfo.name : 'Aji Dam Chhath Puja Exact Venue Pin'}
